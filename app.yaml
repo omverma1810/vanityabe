@@ -1,0 +1,20 @@
+runtime: python
+env: flex
+entrypoint: gunicorn vanitya.wsgi:application
+
+runtime_config:
+  python_version: 3.11
+
+automatic_scaling:
+  min_num_instances: 1
+  max_num_instances: 2
+
+env_variables:
+  DJANGO_SETTINGS_MODULE: "vanitya.settings"
+  SECRET_KEY: "django-insecure-aks%+e%fh9$xx7jvko7x_hl^02_4g)om#i33_zike%k2@uhbor"
+  DEBUG: "False"
+  ALLOWED_HOSTS: ".appspot.com"
+  DB_NAME: "your-db-name"
+  DB_USER: "your-db-user"
+  DB_PASSWORD: "your-db-password"
+  DB_HOST: "/cloudsql/your-instance-connection-name"
