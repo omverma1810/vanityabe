@@ -1,27 +1,7 @@
 steps:
-  # Step 1: Build the Docker image
   - name: "gcr.io/cloud-builders/docker"
     args: ["build", "-t", "gcr.io/$PROJECT_ID/vanitya-backend", "."]
 
-  # Step 2: Run migrations using the built Docker image
-  - name: "gcr.io/cloud-builders/docker"
-    args:
-      [
-        "run",
-        "--rm",
-        "--env",
-        "DATABASE_URL=${_DATABASE_URL}",
-        "--env",
-        "SECRET_KEY=${_SECRET_KEY}",
-        "--env",
-        "DEBUG=${_DEBUG}",
-        "gcr.io/$PROJECT_ID/vanitya-backend",
-        "python",
-        "manage.py",
-        "migrate",
-      ]
-
-  # Step 3: Deploy to Cloud Run
   - name: "gcr.io/cloud-builders/gcloud"
     entrypoint: "bash"
     args:
@@ -32,7 +12,13 @@ steps:
           --region us-central1 \
           --platform managed \
           --allow-unauthenticated \
-          --set-env-vars DATABASE_URL=${_DATABASE_URL},SECRET_KEY=${_SECRET_KEY},DEBUG=${_DEBUG}
+          --set-env-vars \
+            DJANGO_SUPERUSER_USERNAME=vanitya,\
+            DJANGO_SUPERUSER_PASSWORD=Vanitya@1234,\
+            DJANGO_SUPERUSER_EMAIL=vanitya18@gmail.com,\
+            DATABASE_URL=postgres://postgres:Vanitya%401234@34.60.243.200:5432/vanitya-postgres,\
+            SECRET_KEY=django-insecure-xm43@91+9jv1@=x5&2u8@v0@9dp3ej0r%a8v#wue7!91^7%5l+,\
+            DEBUG=False
 
 images:
   - gcr.io/$PROJECT_ID/vanitya-backend
